@@ -1,22 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components";
+import Media from "react-media";
 
-import ClockSvg from "../svg/ClockSvg";
-import OvenSvg from "../svg/OvenSvg";
-import PanSvg from "../svg/PanSvg";
-import MicrowavesSvg from "../svg/MicrowavesSvg";
 import Button from "../components/Button";
+import ClockSvg from "../svg/ClockSvg";
 
-const svg = {
-  oven: OvenSvg,
-  pan: PanSvg,
-  microwaves: MicrowavesSvg,
-};
-
-const getTrueValuesInObj = (object) =>
-  Object.entries(object)
-    .filter(([key, value]) => value == true)
-    .map(([key, value]) => key);
+import { getTrueValuesInObj, svg } from "../utils/utils";
 
 export default function RecipeCard({ recipe }) {
   const [preparation, setPreparation] = useState([]);
@@ -24,67 +13,82 @@ export default function RecipeCard({ recipe }) {
 
   useEffect(() => {
     setPreparation([]);
-  }, [steps]);
+  }, [recipe]);
 
   const renderPreparation = () =>
-    preparation.map((step, i) => <Text key={step}>{`${i + 1}. ${step}`}</Text>);
+    preparation.map((step, i) => (
+      <Text onClick={() => setPreparation([])} key={step}>{`${
+        i + 1
+      }. ${step}`}</Text>
+    ));
+
+  const renderIcons = (mode) =>
+    getTrueValuesInObj(mode).map((elem) => {
+      const SVG = svg[elem];
+      return (
+        <Icon>
+          <SVG key={elem} width={20} />
+        </Icon>
+      );
+    });
+
+  const renderListItems = (ingredients) =>
+    ingredients.map(({ name, quantity }) => (
+      <Item key={name}>
+        <Text fWeight="bold">{name}</Text>
+        <Text>{quantity.toUpperCase()}</Text>
+      </Item>
+    ));
 
   return (
-    <Wrapper>
-      {recipe.nomatches ? (
-        <Text fSize="18px" fWeight="bold">
-          No se encontraron recetas.
-        </Text>
-      ) : (
-        <>
-          <Container width="260px">
-            {preparation.length ? (
-              renderPreparation()
-            ) : (
-              <Container>
-                <Image src={image} />
-                <Button
-                  onClickFn={() => setPreparation(steps)}
-                  text="Ver preparación"
-                  type="inverted"
-                />
-              </Container>
-            )}
-          </Container>
-          <Container width="330px">
-            <Title>{name}</Title>
-            <IconsGroup>
-              <IconContainer>
-                <Text fWeight="bold">{description.time}'</Text>
-                <Icon>
-                  <ClockSvg width={20} />
-                </Icon>
-              </IconContainer>
-              <Text>
-                {getTrueValuesInObj(description.mode).map((elem) => {
-                  const SVG = svg[elem];
-                  return (
-                    <Icon>
-                      <SVG key={elem} width={20} />
-                    </Icon>
-                  );
-                })}
-              </Text>
-            </IconsGroup>
-            <IconsGroup>
-              <List>
-                {ingredients.map(({ name, quantity }) => (
-                  <LI key={name}>
-                    <Text fWeight="bold">{name}</Text>
-                    <Text>{quantity}</Text>
-                  </LI>
-                ))}
-              </List>
-            </IconsGroup>
-          </Container>
-        </>
-      )}
-    </Wrapper>
+    <>
+      <Media queries={{ large: "(min-width: 1000px)" }}>
+        {({ large }) => (
+          <Fragment>
+            <Wrapper
+              fDir={!large ? "column-reverse" : "row"}
+              width={!large ? "95%" : "45%"}
+            >
+              {recipe.nomatches ? (
+                <Text fSize="18px" fWeight="bold">
+                  No se encontraron recetas.
+                </Text>
+              ) : (
+                <>
+                  <Container width={!large ? "220px" : "260px"}>
+                    {preparation.length ? (
+                      renderPreparation()
+                    ) : (
+                      <Container>
+                        <Image src={image} />
+                        <Button
+                          onClickFn={() => setPreparation(steps)}
+                          text="Ver preparación"
+                          type="inverted"
+                        />
+                      </Container>
+                    )}
+                  </Container>
+                  <Container width="330px">
+                    <Title>{name}</Title>
+                    <IconsGroup>
+                      <IconContainer>
+                        <Text fWeight="bold">{description.time}'</Text>
+                        <Icon>
+                          <ClockSvg width={20} />
+                        </Icon>
+                      </IconContainer>
+                      <Text>{renderIcons(description.mode)}</Text>
+                    </IconsGroup>
+                    <List>{renderListItems(ingredients)}</List>
+                  </Container>
+                </>
+              )}
+            </Wrapper>
+          </Fragment>
+        )}
+      </Media>
+    </>
   );
 }
 
@@ -92,16 +96,16 @@ const Wrapper = styled.div({
   alignItems: "center",
   background: "none",
   display: "flex",
+  flexDirection: (props) => props.fDir,
   justifyContent: "space-around",
-  minHeight: "350px",
-  width: "45%",
-  padding: "30px 0",
+  width: (props) => props.width,
   position: "absolute",
-  bottom: "0",
+  top: "200px",
 });
 const Container = styled.div({
   display: "flex",
   flexDirection: "column",
+  minHeight: "300px",
   width: (props) => props.width,
 });
 const IconsGroup = styled.div({
@@ -148,6 +152,6 @@ const List = styled.ul({
   padding: "0",
   width: "100%",
 });
-const LI = styled.li({
+const Item = styled.li({
   width: "33%",
 });

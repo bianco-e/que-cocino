@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import IngredientCard from "./IngredientCard";
 import IngredientsDropdown from "./IngredientsDropdown";
+import Input from "./Input";
 
 import { getMatchingIngredients } from "../api/apiQueries";
 
@@ -20,7 +21,7 @@ export default function IngredientsFilter({
   const [ingredient, setIngredient] = useState("");
 
   useEffect(() => {
-    if (ingredient.length > 2) {
+    if (ingredient.length > 1) {
       getMatchingIngredients(ingredient).then((res) =>
         setMatchingIngredients(res)
       );
@@ -56,11 +57,11 @@ export default function IngredientsFilter({
   return (
     <Wrapper>
       <Container>
-        <Title>{title}</Title>
         <Input
+          label={title}
+          onChange={(e) => handleInputChange(e)}
           onKeyDown={(e) => handleKeyDown(e)}
           value={ingredient}
-          onChange={(e) => handleInputChange(e)}
         />
         <IngredientsDropdown
           addIngredient={addIngredient}
@@ -98,18 +99,4 @@ const Container = styled.div({
 const FilteredIngredients = styled.div({
   display: "flex",
   flexWrap: "wrap",
-});
-const Input = styled.input({
-  background: "none",
-  border: "2px solid #a2cc41",
-  borderRadius: "2px",
-  color: "#a2cc41",
-  fontSize: "14px",
-  padding: "5px",
-  textAlign: "center",
-  width: "80%",
-});
-const Title = styled.h4({
-  color: "#a2cc41",
-  margin: "8px 0",
 });

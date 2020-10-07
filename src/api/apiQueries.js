@@ -1,5 +1,27 @@
 const URL = "http://localhost:5000";
 
+export const postRecipe = (recipe) => {
+  fetch(`${URL}/recipes/add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(recipe),
+  });
+};
+
+export const postIngredients = (ingredients) => {
+  return ingredients.forEach((ingredient) =>
+    getMatchingIngredients(ingredient).then((res) => {
+      if (!res.find((name) => name.toLowerCase() == ingredient.toLowerCase())) {
+        return fetch(`${URL}/ingredients/add`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: ingredient }),
+        });
+      }
+    })
+  );
+};
+
 export const getRandomRecipe = () =>
   fetch(`${URL}/recipes/random`).then((res) => res.json());
 

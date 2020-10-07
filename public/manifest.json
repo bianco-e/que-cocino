@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "¿Qué cocino?",
+  "name": "¿Qué cocino? App de recetas",
   "icons": [
     {
       "src": "favicon.ico",

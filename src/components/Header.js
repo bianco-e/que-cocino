@@ -10,9 +10,8 @@ export default function Header({ setRecipe }) {
   const [havingIngredients, setHavingIngredients] = useState([]);
   const [notHavingIngredients, setNotHavingIngredients] = useState([]);
 
-  const handleClick = () => {
+  const getRecipe = () => {
     if (havingIngredients.length || notHavingIngredients.length) {
-      console.log(havingIngredients, notHavingIngredients);
       return getRecipeWithFilter(
         havingIngredients,
         notHavingIngredients
@@ -29,7 +28,7 @@ export default function Header({ setRecipe }) {
         setFilteredIngredients={setHavingIngredients}
       />
       <ButtonContainer>
-        <Button text="Pedir receta" onClickFn={() => handleClick()} />
+        <Button text="Pedir receta" onClickFn={() => getRecipe()} />
       </ButtonContainer>
       <IngredientsFilter
         title="Sin"
