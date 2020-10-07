@@ -1,4 +1,5 @@
-const URL = "http://localhost:5000";
+const LOCAL_URL = "http://localhost:5000";
+const URL = "https://que-cocino-api.herokuapp.com";
 
 export const postRecipe = (recipe) => {
   fetch(`${URL}/recipes/add`, {
